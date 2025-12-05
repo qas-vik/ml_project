@@ -1,0 +1,27 @@
+# Data
+data/
+*.csv
+*.gz
+*.zip
+
+# Models
+models/
+*.h5
+*.pkl
+*.pt
+*.joblib
+
+# Logs
+logs/
+*.log
+
+# Virtual Environments
+venv/
+.env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# System
+__pycache__/
+.DS_Store
