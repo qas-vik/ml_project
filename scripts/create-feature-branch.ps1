@@ -46,3 +46,4 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "Error: Failed to create branch" -ForegroundColor Red
     exit 1
 }
+

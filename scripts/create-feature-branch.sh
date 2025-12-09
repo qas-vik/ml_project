@@ -56,3 +56,4 @@ echo "  1. Make your changes"
 echo "  2. Commit with: git commit (will use template)"
 echo "  3. Push: git push -u origin $BRANCH_NAME"
 echo "  4. Create a Pull Request"
+

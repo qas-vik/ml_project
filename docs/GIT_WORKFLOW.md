@@ -242,3 +242,4 @@ git diff --staged
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [Git Branching Model](https://nvie.com/posts/a-successful-git-branching-model/)
 - [Git Best Practices](https://github.com/git/git/blob/master/Documentation/SubmittingPatches)
+
