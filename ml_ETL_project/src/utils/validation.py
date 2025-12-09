@@ -1,88 +1,74 @@
 import numpy as np
-from .logger import get_logger
+import pandas as pd
+import logging
 
-logger = get_logger(__name__)
-
+logger = logging.getLogger(__name__)
 
 class ValidationError(Exception):
-    """Custom exception for validation failures."""
+    """Custom validation error."""
     pass
 
 
-def compute_iqr_ranges(df, cols, k: float = 3.0):
+# ---------------- ROW COUNT VALIDATION ---------------- #
+
+def validate_row_count(df: pd.DataFrame, min_rows: int = 1):
     """
-    Compute lower/upper allowed bounds using the IQR rule.
-    Returns a dict: {col: {"low": float, "high": float}, ...}
+    Validate that DataFrame has at least `min_rows`.
+    Returns dict with validation result.
+    Raises ValidationError if check fails.
     """
-    ranges = {}
-    for col in cols:
-        s = df[col].dropna()
-        if s.empty:
-            # return sensible defaults for empty column
-            ranges[col] = {"low": float("-inf"), "high": float("inf")}
-            continue
-        q1 = float(s.quantile(0.25))
-        q3 = float(s.quantile(0.75))
-        iqr = q3 - q1
-        low = q1 - k * iqr
-        high = q3 + k * iqr
-        ranges[col] = {"low": low, "high": high}
-    return ranges
+
+    row_count = len(df)
+
+    if row_count < min_rows:
+        msg = f"Row count {row_count} is less than required minimum {min_rows}"
+        logger.error(msg)
+        raise ValidationError(msg)
+
+    return {"valid": True, "rows": row_count}
 
 
-def validate_row_count(df, min_rows: int = 1):
-    """
-    Validate row count. Returns dict with result and details.
-    """
-    ok = len(df) >= min_rows
-    details = {"rows": len(df), "min_rows": min_rows}
-    if ok:
-        logger.info(f"Row count validation OK: {details}")
-    else:
-        logger.warning(f"Row count validation FAILED: {details}")
-    return {"valid": ok, "details": details}
+# ---------------- NUMERIC RANGE VALIDATION ---------------- #
 
-
-def validate_required_columns(df, required_cols):
+def validate_numeric_ranges(df: pd.DataFrame, ranges: dict, strict: bool = True, max_allowed_violations: int = 0):
     """
-    Validate required columns exist. Returns {'valid': bool, 'missing': [...]}
-    """
-    missing = [c for c in required_cols if c not in df.columns]
-    ok = len(missing) == 0
-    if ok:
-        logger.info("Required column validation OK.")
-    else:
-        logger.warning(f"Missing required columns: {missing}")
-    return {"valid": ok, "missing": missing}
+    Validate numeric ranges.
+    - strict=True → ANY violation raises an error
+    - max_allowed_violations → how many violations allowed before raising
 
-
-def validate_numeric_ranges(df, ranges, max_allowed_violations: int = 50):
+    Returns dict summary if valid.
+    Raises ValidationError if too many violations.
     """
-    Validate numeric ranges, but do not stop pipeline by default.
-    Returns {'valid': bool, 'total_violations': int, 'per_column': {...}}.
+    total_violations = 0
+    details = {}
 
-    The caller can choose to raise based on returned dict.
-    """
-    per_col = {}
-    total = 0
-    for col, bounds in ranges.items():
-        low = bounds.get("low", float("-inf"))
-        high = bounds.get("high", float("inf"))
+    for col, (low, high) in ranges.items():
         if col not in df.columns:
-            per_col[col] = {"below": 0, "above": 0}
             continue
-        s = df[col].dropna()
-        below = int((s < low).sum())
-        above = int((s > high).sum())
-        per_col[col] = {"below": below, "above": above}
-        total += below + above
 
-    valid = total <= max_allowed_violations
-    if valid:
-        logger.info(f"Numeric ranges OK: total_violations={total}")
-    else:
-        logger.warning(
-            f"Numeric ranges exceeded allowed limit: total_violations={total} > {max_allowed_violations}"
-        )
+        below = df[col] < low
+        above = df[col] > high
 
-    return {"valid": valid, "total_violations": total, "per_column": per_col}
+        violations = below.sum() + above.sum()
+        total_violations += violations
+
+        if violations > 0:
+            details[col] = {
+                "below": below.sum(),
+                "above": above.sum()
+            }
+
+    logger.info(f"Numeric ranges OK: total_violations={total_violations}")
+
+    if strict or total_violations > max_allowed_violations:
+        if total_violations > max_allowed_violations:
+            msg = f"Numeric range violations exceeded allowed limit: {total_violations} > {max_allowed_violations}"
+            logger.warning(msg)
+            logger.warning(f"Details: {details}")
+            raise ValidationError(msg)
+
+    return {
+        "valid": True,
+        "total_violations": total_violations,
+        "details": details
+    }
