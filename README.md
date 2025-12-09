@@ -1,4 +1,4 @@
-# ML Services Project
+
 
 This repository hosts reusable scaffolding for machine learning services. It demonstrates a clean Git workflow, a reproducible file layout, and collaboration guardrails (branching, commits, and code reviews).
 
@@ -12,7 +12,8 @@ otebooks/: exploratory data analysis and experiments
 
 ## Getting Started
 1. Clone the repository and create a virtual environment (e.g., python -m venv .venv).
-2. Install dependencies once a equirements.txt is published.
+2. Install dependencies once a 
+equirements.txt is published.
 3. Create a feature branch from main that follows the naming rules in docs/CONTRIBUTING.md.
 4. Develop, test, and document your work. Keep large artifacts out of Git.
 5. Open a pull request and request review from at least one teammate before merging.
