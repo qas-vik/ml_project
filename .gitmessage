@@ -1,0 +1,34 @@
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+#
+# Types:
+#   feat:     A new feature
+#   fix:      A bug fix
+#   docs:     Documentation only changes
+#   style:    Changes that do not affect the meaning of the code
+#   refactor: A code change that neither fixes a bug nor adds a feature
+#   perf:     A code change that improves performance
+#   test:     Adding missing tests or correcting existing tests
+#   chore:    Changes to the build process or auxiliary tools
+#   ci:       Changes to CI configuration files and scripts
+#
+# Scope (optional): area of codebase affected (e.g., api, training, data, model)
+#
+# Subject: imperative mood, lowercase, no period, max 72 chars
+#
+# Body (optional): explain WHAT and WHY, wrap at 72 chars
+#
+# Footer (optional): reference issues, breaking changes
+#
+# Examples:
+#   feat(api): add batch inference endpoint
+#   fix(training): guard against empty datasets
+#   docs: update contributing guidelines
+#   refactor(data): simplify preprocessing pipeline
+#
+# ---
+# Enter your commit message above. Lines starting with '#' will be ignored.
+# Remove the template and write your commit message below this line.
