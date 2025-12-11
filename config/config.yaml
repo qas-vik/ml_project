@@ -1,0 +1,25 @@
+raw_path: "ml_ETL_project/data/raw/winequalityN.csv"
+processed_path: "data/processed/wine_processed.csv"
+
+validation:
+  required_columns:
+    - fixed acidity
+    - volatile acidity
+    - citric acid
+    - residual sugar
+    - chlorides
+    - free sulfur dioxide
+    - total sulfur dioxide
+    - density
+    - pH
+    - sulphates
+    - alcohol
+    - quality
+
+pipeline:
+  outlier_k: 3.0
+
+logging:
+  level: "INFO"
+
+log_path: "logs/etl.log"
