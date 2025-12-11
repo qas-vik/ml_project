@@ -11,6 +11,10 @@ class Transformer:
     def transform(self, df: pd.DataFrame):
         raise NotImplementedError
 
+
+# ------------------------------------------------------------------------------
+# IMPUTE MEDIAN
+# ------------------------------------------------------------------------------
 @dataclass
 class ImputeMedian(Transformer):
     cols: list = None
@@ -30,6 +34,10 @@ class ImputeMedian(Transformer):
             out[c] = out[c].fillna(m)
         return out
 
+
+# ------------------------------------------------------------------------------
+# REMOVE OUTLIERS
+# ------------------------------------------------------------------------------
 @dataclass
 class RemoveOutliersIQR(Transformer):
     cols: list = None
@@ -51,22 +59,42 @@ class RemoveOutliersIQR(Transformer):
             logger.info(f"Outlier removal on {c}: removed {before - after} rows (bounds {lower:.4f}..{upper:.4f})")
         return out
 
+
+# ------------------------------------------------------------------------------
+# FEATURE ENGINEERING + CATEGORICAL ENCODING
+# ------------------------------------------------------------------------------
 @dataclass
 class FeatureEngineering(Transformer):
     def transform(self, df: pd.DataFrame):
         out = df.copy()
-        # acidity ratio (if available)
+
+        # 1) ACIDITY RATIO
         if "fixed acidity" in out.columns and "volatile acidity" in out.columns:
             out["acidity_ratio"] = out["fixed acidity"] / (out["volatile acidity"] + 1e-6)
-        # normalized alcohol
+
+        # 2) NORMALIZED ALCOHOL
         if "alcohol" in out.columns:
             scaler = MinMaxScaler()
             out["alcohol_norm"] = scaler.fit_transform(out[["alcohol"]])
-        # categorical label for quality
+
+        # 3) QUALITY LABEL
         if "quality" in out.columns:
-            out["quality_label"] = out["quality"].apply(lambda q: "low" if q<=4 else ("high" if q>=7 else "medium"))
+            out["quality_label"] = out["quality"].apply(
+                lambda q: "low" if q <= 4 else ("high" if q >= 7 else "medium")
+            )
+
+        # 4) CATEGORICAL ENCODING (Fix for 'type' column)
+        categorical_cols = out.select_dtypes(include=["object", "category"]).columns.tolist()
+        if categorical_cols:
+            logger.info(f"Encoding categorical columns: {categorical_cols}")
+            out = pd.get_dummies(out, columns=categorical_cols, drop_first=True)
+
         return out
 
+
+# ------------------------------------------------------------------------------
+# PIPELINE WRAPPER
+# ------------------------------------------------------------------------------
 class Pipeline:
     def __init__(self, steps: list):
         self.steps = steps
