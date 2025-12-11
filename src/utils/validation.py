@@ -72,3 +72,10 @@ def validate_numeric_ranges(df: pd.DataFrame, ranges: dict, strict: bool = True,
         "total_violations": total_violations,
         "details": details
     }
+
+def validate_required_columns(df, required_cols):
+    missing = [col for col in required_cols if col not in df.columns]
+    return {
+        "status": "pass" if len(missing) == 0 else "fail",
+        "missing_columns": missing
+    }
