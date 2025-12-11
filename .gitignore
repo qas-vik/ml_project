@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Python
 __pycache__/
 *.py[cod]
@@ -26,3 +27,143 @@ Thumbs.db
 .env
 *.pem
 *.key
+=======
+# ============================================
+# ML Project .gitignore Template
+# ============================================
+
+# Runtime environments
+.venv/
+venv/
+ENV/
+env/
+.env
+*.env
+.env.local
+.env.*.local
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Data + experiment artifacts
+/data/
+/datasets/
+/models/
+/checkpoints/
+/logs/
+/outputs/
+/results/
+/tmp/
+*.csv
+*.tsv
+*.parquet
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib
+*.model
+*.pt
+*.pth
+*.ckpt
+*.pb
+*.onnx
+*.tflite
+*.h5
+*.weights
+
+# Large data files (uncomment if needed)
+# *.zip
+# *.tar.gz
+# *.tar
+# *.gz
+
+# Notebooks + metadata
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+.nbconvert/
+jupyter_execute/
+
+# ML frameworks & experiment tracking
+mlruns/
+wandb/
+ray_results/
+lightning_logs/
+.neptune/
+comet_ml/
+tensorboard_logs/
+tensorboard/
+mlflow/
+optuna/
+hyperopt/
+*.tfevents.*
+
+# Model serving & deployment
+*.pb
+saved_model/
+models/export/
+serving/
+
+# Jupyter
+.jupyter/
+
+# OS / IDE
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Packaging/build
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+MANIFEST
+
+# Testing
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.pytest_cache/
+test-results/
+junit.xml
+
+# Documentation
+docs/_build/
+docs/.doctrees/
+
+# Profiling
+.prof
+*.prof
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.out
+*.err
+>>>>>>> c2981f3df888ceba422873168dfb336f9d20fbea
