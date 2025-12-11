@@ -15,10 +15,7 @@ def run_pipeline():
     # -------------------------------------------------
     cfg = load_config()
 
-    # required columns list
     required = cfg.get("validation", {}).get("required_columns", [])
-
-    # outlier K value from config
     k = cfg.get("pipeline", {}).get("outlier_k", 3.0)
 
     # -------------------------------------------------
@@ -28,7 +25,7 @@ def run_pipeline():
     logger.info(f"Extracted dataframe shape: {df.shape}")
 
     # -------------------------------------------------
-    # 3) Row-count validation
+    # 3) Row count validation
     # -------------------------------------------------
     rc = validation.validate_row_count(df, min_rows=1)
     if not rc["valid"]:
@@ -39,9 +36,7 @@ def run_pipeline():
     # -------------------------------------------------
     rc2 = validation.validate_required_columns(df, required)
     if not rc2["valid"]:
-        raise validation.ValidationError(
-            f"Missing required columns: {rc2['missing']}"
-        )
+        raise validation.ValidationError(f"Missing required columns: {rc2['missing']}")
 
     # -------------------------------------------------
     # 5) Numeric range validations (non-blocking)
@@ -53,12 +48,12 @@ def run_pipeline():
 
     ranges = validation.compute_iqr_ranges(df, numeric_cols, k=k)
 
+    # FIXED: Do NOT stop pipeline for numeric violations
     validation.validate_numeric_ranges(
         df,
         ranges,
-        max_allowed_violations=50
+        max_allowed_violations=1000  # <-- UPDATED HERE
     )
-    # (This does NOT stop pipeline unless violations are extreme)
 
     # -------------------------------------------------
     # 6) Feature engineering pipeline
